@@ -1,0 +1,30 @@
+# Dependencias (se regeneran con `npm install`)
+node_modules/
+
+# Compilación (se regenera con `npm run build`)
+dist/
+*.tsbuildinfo
+
+# Variables de entorno: pueden contener claves, nunca se suben
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Firebase (caché local del CLI)
+.firebase/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.claude/settings.local.json
+.claude/launch.json

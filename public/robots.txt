@@ -1,2 +1,7 @@
+# Bloqueo temporal: la página no debe aparecer en buscadores todavía.
+# Se habilita cuando el contenido esté completo y revisado, volviendo a:
+#   User-agent: *
+#   Allow: /
+# (y cambiando también la etiqueta meta robots de index.html a "index, follow").
 User-agent: *
-Allow: /
+Disallow: /

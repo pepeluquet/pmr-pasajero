@@ -28,4 +28,6 @@ Personas sin conocimientos técnicos ni aeronáuticos. Muchas usan el celular, a
 - `npm install` · `npm run dev` · `npm run build` · `npm run typecheck`
 
 ## Publicación
-Todavía no tiene proyecto propio de Firebase. No copiar el `.firebaserc` de guia-pmr: haría que un deploy pise la guía académica publicada.
+- Proyecto propio de Firebase: `pmr-pasajero` → https://pmr-pasajero.web.app (`npm run deploy`).
+- Nunca usar el `.firebaserc` de guia-pmr: haría que un deploy pise la guía académica publicada.
+- Por ahora la página está oculta de buscadores (`noindex, nofollow` en `index.html` y `Disallow: /` en `public/robots.txt`). Se habilita cuando el contenido esté completo y revisado.

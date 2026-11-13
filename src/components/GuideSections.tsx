@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Check, Info } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Check, Info, Printer } from 'lucide-react';
 import { CopyButton } from '@/components/ui/copy-button';
 import { TextAnimate } from '@/components/ui/text-animate';
 import { TextureOverlay } from '@/components/ui/texture-overlay';
@@ -95,6 +95,52 @@ export function RightsSection() {
             </li>)}
           </ul>
           <p className="rights-reference" data-testid="text-rights-reference"><small>{c.reference}</small></p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Imprime solo el checklist. La clase "print-checklist" activa los estilos de
+// impresión que ocultan el resto de la página (ver @media print en index.css);
+// así Ctrl + P desde el navegador sigue imprimiendo la página completa.
+function printChecklist() {
+  const page = document.documentElement;
+  page.classList.add('print-checklist');
+  // "afterprint" se dispara al cerrar el diálogo de impresión, se haya impreso o no.
+  window.addEventListener('afterprint', () => page.classList.remove('print-checklist'), { once: true });
+  window.print();
+}
+
+// "Antes de viajar": casillas nativas del navegador. No usan estado de React
+// porque lo marcado no se guarda; el navegador ya recuerda si cada casilla está tildada.
+export function ChecklistSection() {
+  const c = guide.checklist;
+  return (
+    <section id="antes-de-viajar" className="section checklist-section" aria-labelledby="checklist-title">
+      <div className="container section-grid">
+        <div className="section-head">
+          <span className="section-index">{c.index}</span>
+          <h2 className="section-title" id="checklist-title">{c.title}</h2>
+          <p className="section-lead">{c.lead}</p>
+        </div>
+        <div className="info-card checklist-card">
+          <ul className="checklist">
+            {c.items.map(item => <li className="checklist-item" key={item.id} data-testid={`checklist-${item.id}`}>
+              {/* El label envuelve casilla y texto: tocar cualquier parte del texto marca la casilla. */}
+              <label className="checklist-label">
+                <input type="checkbox" />
+                <span>{item.text}</span>
+              </label>
+              {item.reference && <p className="checklist-reference"><small>{item.reference}</small></p>}
+              {/* El link va fuera del label para que tocarlo no marque la casilla. */}
+              {item.link && <a className="checklist-link" href={`#${item.link.target}`}>{item.link.label}<ArrowDownRight aria-hidden="true"/></a>}
+            </li>)}
+          </ul>
+          <p className="checklist-note">{c.note}</p>
+          <button type="button" className="print-button" onClick={printChecklist} data-testid="button-print-checklist">
+            <Printer aria-hidden="true" />{c.print}
+          </button>
         </div>
       </div>
     </section>

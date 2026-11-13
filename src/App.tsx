@@ -1,5 +1,5 @@
 import { SiteHeader } from './components/SiteHeader';
-import { ComplaintsSection, HeroSection, JourneySection, QuizSection, RightsSection, SiteFooter, SourcesSection, WheelchairSection } from './components/GuideSections';
+import { ChecklistSection, ComplaintsSection, HeroSection, JourneySection, QuizSection, RightsSection, SiteFooter, SourcesSection, WheelchairSection } from './components/GuideSections';
 import { guide } from './content/guide';
 
 // Página única: el orden de los componentes sigue el orden en que el pasajero
@@ -13,6 +13,7 @@ function App() {
         <HeroSection />
         <QuizSection />
         <RightsSection />
+        <ChecklistSection />
         <JourneySection />
         <WheelchairSection />
         <ComplaintsSection />

@@ -170,6 +170,23 @@ p { max-width: 68ch; }
 
 .wheelchair-section { background: #f4f0e7; }
 
+/* "Antes de viajar": casillas grandes y fáciles de tocar, alineadas con el texto. */
+.checklist-section { background: #f4f0e7; }
+.checklist { list-style: none; margin: 0; padding: 0; }
+.checklist-item { padding: 18px 0; border-top: 1px solid #ddd6c9; }
+.checklist-item:first-child { border-top: 0; padding-top: 0; }
+.checklist-label { display: flex; align-items: flex-start; gap: 14px; font-size: 1.1rem; line-height: 1.6; cursor: pointer; }
+.checklist-label input { width: 24px; height: 24px; flex: 0 0 auto; margin: 3px 0 0; accent-color: #316c69; cursor: pointer; }
+/* La norma y el link se alinean con el texto, no con la casilla (24px de casilla + 14px de separación). */
+.checklist-reference { margin: 6px 0 0 38px; color: #3f6864; font-family: var(--app-font-mono); font-size: .85rem; font-weight: 700; }
+.checklist-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-left: 38px; color: #88502f; font-size: .95rem; font-weight: 700; text-underline-offset: 4px; }
+.checklist-link:hover { color: #58311e; }
+.checklist-link svg { width: 16px; height: 16px; }
+.checklist-note { color: #647076; font-size: .95rem; margin: 22px 0 0; }
+.print-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 22px; padding: 12px 26px; border: 1.5px solid #28393e; border-radius: 3px; background: #28393e; color: #f4f1e9; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+.print-button:hover { background: #3a5157; }
+.print-button svg { width: 18px; height: 18px; }
+
 .notice { display: flex; align-items: flex-start; gap: 18px; background: #e9eee9; border-left: 4px solid #397572; padding: 23px 26px; margin-bottom: 48px; }
 .notice-icon { width: 22px; height: 22px; flex: 0 0 auto; color: #316c69; margin-top: 2px; }
 .notice p { margin: 0; font-size: 1rem; }
@@ -298,6 +315,7 @@ p { max-width: 68ch; }
   .hero h1 { font-size: clamp(2.75rem, 12vw, 3.4rem); }
   .hero-link { width: 100%; justify-content: space-between; }
   .notice { padding: 18px; gap: 11px; }
+  .print-button { width: 100%; }
   /* En celulares chicos los botones Sí/No ocupan todo el ancho, más fáciles de tocar. */
   .quiz-answers .quiz-button, .quiz-button.primary { flex: 1 1 100%; width: 100%; }
   .quiz-codes li { grid-template-columns: 1fr; gap: 6px; }
@@ -308,4 +326,35 @@ p { max-width: 68ch; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* Impresión del checklist (botón "Imprimir checklist"). Solo se aplica cuando el botón
+   agrega la clase .print-checklist: con Ctrl + P se imprime la página completa como siempre.
+   Versión limpia: solo el checklist, en blanco y negro, letra grande (mínimo 12pt) y sin menú. */
+@media print {
+  @page { margin: 1.5cm; }
+  html.print-checklist .skip-link,
+  html.print-checklist .site-header,
+  html.print-checklist .site-footer,
+  html.print-checklist main > section:not(#antes-de-viajar),
+  html.print-checklist #antes-de-viajar .section-index,
+  html.print-checklist .checklist-link,
+  html.print-checklist .checklist-note,
+  html.print-checklist .print-button { display: none !important; }
+  html.print-checklist * { color: #000 !important; background: #fff !important; box-shadow: none !important; }
+  html.print-checklist #antes-de-viajar { padding: 0; border: 0; }
+  html.print-checklist #antes-de-viajar .container { width: 100%; }
+  html.print-checklist #antes-de-viajar .section-grid { display: block; }
+  html.print-checklist #antes-de-viajar .section-head { margin-bottom: 16pt; }
+  html.print-checklist .section-title { font-size: 24pt; margin: 0 0 8pt; }
+  html.print-checklist .section-lead { font-size: 13pt; }
+  html.print-checklist .checklist-card { border: 0; padding: 0; }
+  html.print-checklist .checklist-card::before { display: none; }
+  html.print-checklist .checklist-item { padding: 10pt 0; border-top: 1px solid #000; break-inside: avoid; }
+  html.print-checklist .checklist-item:first-child { border-top: 0; }
+  html.print-checklist .checklist-label { font-size: 14pt; gap: 10pt; }
+  /* Casilla dibujada como un cuadrado vacío para marcar con lapicera; si ya estaba tildada, se imprime con una cruz. */
+  html.print-checklist .checklist-label input { appearance: none; width: 16pt; height: 16pt; margin-top: 2pt; border: 1.5pt solid #000; border-radius: 0; display: grid; place-content: center; }
+  html.print-checklist .checklist-label input:checked::after { content: '✕'; font-size: 12pt; line-height: 1; }
+  html.print-checklist .checklist-reference { margin-left: 26pt; font-size: 12pt; }
 }

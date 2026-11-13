@@ -5,6 +5,8 @@ export type NavigationItem = { id: string; label: string };
 export type SsrCode = { code: string; meaning: string };
 export type JourneyStage = { number: string; title: string; detail: string };
 export type Right = { title: string; body: string };
+// Ítem del checklist: "reference" es la norma (opcional) y "link" lleva a otra sección de la página (opcional).
+export type ChecklistItem = { id: string; text: string; reference?: string; link?: { label: string; target: string } };
 // La URL es opcional: si todavía no tenemos el link oficial, la cita se muestra sin botón para abrirla.
 export type Source = { citation: string; url?: string };
 // Cada pregunta de Sí/No indica a qué paso se va con cada respuesta.
@@ -23,6 +25,7 @@ export const guide = {
     // Etiquetas cortas para que el menú de escritorio entre en una sola línea.
     { id: 'cuestionario', label: '¿Qué necesito?' },
     { id: 'derechos', label: 'Tus derechos' },
+    { id: 'antes-de-viajar', label: 'Antes de viajar' },
     { id: 'dia-del-viaje', label: 'El día del viaje' },
     { id: 'silla', label: 'Con tu silla' },
     { id: 'reclamos', label: 'Si algo salió mal' },
@@ -113,9 +116,62 @@ export const guide = {
     ] satisfies Right[],
     reference: '(Decreto 809/2024, art. 31)',
   },
+  // Checklist "Antes de viajar": ítems y normas indicados por el equipo del trabajo.
+  // El ítem 8 no afirma un derecho porque no tiene norma citada (regla: no inventar datos normativos).
+  checklist: {
+    index: '03 / ANTES DE VIAJAR',
+    title: 'Antes de viajar',
+    lead: 'Una lista para repasar en los días previos al vuelo. Marcá cada punto a medida que lo resolvés.',
+    items: [
+      {
+        id: 'avisar',
+        text: 'Avisá a la aerolínea, con al menos 48 horas de anticipación, que necesitás asistencia.',
+        reference: '(Decreto 809/2024, art. 31)',
+      },
+      {
+        id: 'tipo-asistencia',
+        text: 'Indicá qué tipo de asistencia necesitás. Si no sabés cuál, hacé el cuestionario "¿Qué asistencia necesito?".',
+        link: { label: 'Ir al cuestionario', target: 'cuestionario' },
+      },
+      {
+        id: 'silla',
+        text: 'Si viajás con tu propia silla, informá si es manual o eléctrica, cuánto pesa y cuánto mide y, si es eléctrica, qué tipo de batería tiene. Preguntá dónde te la devuelven: en la puerta del avión o en otro sector.',
+      },
+      {
+        id: 'pasajero-asistente',
+        text: 'Consultá si tenés que viajar con un pasajero asistente (una persona que te acompañe). La norma lo exige cuando la persona no puede comprender las instrucciones de seguridad, abrocharse el cinturón, colocarse la máscara de oxígeno, cubrir sus necesidades básicas o colaborar en una evacuación.',
+        reference: '(Decreto 809/2024, art. 31)',
+      },
+      {
+        id: 'autorizacion-medica',
+        text: 'Si tenés una condición médica que pueda agravarse durante el vuelo, o una cirugía reciente, consultá si la aerolínea te pide una autorización médica previa.',
+        reference: '(Decreto 809/2024, art. 32)',
+      },
+      {
+        id: 'llegar-temprano',
+        text: 'Llegá al aeropuerto con tiempo extra: los pasajeros con asistencia suelen embarcar antes que el resto, aunque el horario depende de cada aerolínea. Tenés derecho a check-in prioritario y gratuito.',
+        reference: '(Decreto 809/2024, art. 31)',
+      },
+      {
+        id: 'confirmar-reserva',
+        text: 'En el mostrador, confirmá que la asistencia figura en tu reserva.',
+      },
+      {
+        id: 'como-ayudarte',
+        text: 'Contale al personal cómo preferís que te ayuden: hay quienes prefieren tomarse del brazo y quienes prefieren no ser tocados. Si no te preguntan, decíselo vos.',
+      },
+      {
+        id: 'documentacion',
+        text: 'Guardá la documentación del viaje por si necesitás hacer un reclamo.',
+        link: { label: 'Ver cómo reclamar', target: 'reclamos' },
+      },
+    ] satisfies ChecklistItem[],
+    note: 'Lo que marques no se guarda: si recargás la página, las casillas vuelven a quedar vacías.',
+    print: 'Imprimir checklist',
+  },
   // "El día del viaje": el recorrido contado desde lo que vive el pasajero.
   journey: {
-    index: '03 / PASO A PASO',
+    index: '04 / PASO A PASO',
     title: 'El día del viaje',
     lead: 'Así es el recorrido, desde que salís de tu casa hasta que llegás a destino.',
     stages: [
@@ -128,14 +184,14 @@ export const guide = {
   },
   // "Si viajás con tu silla": sección todavía sin contenido, se completa cuando tengamos fuentes verificadas.
   wheelchair: {
-    index: '04 / TU SILLA',
+    index: '05 / TU SILLA',
     title: 'Si viajás con tu silla',
     status: 'En preparación',
     text: 'Esta sección va a explicar qué datos de tu silla de ruedas y de su batería conviene tener a mano antes de viajar.',
   },
   // Sección "Si algo salió mal": pasos para reclamar, en lenguaje simple.
   complaints: {
-    index: '05 / RECLAMOS',
+    index: '06 / RECLAMOS',
     title: 'Si algo salió mal',
     lead: 'Si la asistencia no fue la que correspondía, podés reclamar. Estos son los pasos.',
     stepLabel: 'Paso',
@@ -154,7 +210,7 @@ export const guide = {
   },
   // Solo las normas que se citan en esta página (y el documento de IATA del que salen los códigos del cuestionario).
   sources: {
-    index: '06 / FUENTES',
+    index: '07 / FUENTES',
     title: 'Fuentes',
     lead: 'Las normas que se citan en esta guía, para que puedas consultarlas. Formato APA 7.',
     primary: 'Fuente primaria',

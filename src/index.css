@@ -154,8 +154,6 @@ p { max-width: 68ch; }
 .info-card::before { content: ''; position: absolute; inset: -1px auto -1px -1px; width: 4px; background: #bd6238; }
 /* El contenido queda por encima de la textura decorativa (Cult UI · Texture Overlay). */
 .info-card > :not([data-slot='texture-overlay']) { position: relative; }
-.info-card-text { margin: 22px 0 0; font-size: 1.1rem; line-height: 1.65; }
-.status-tag { display: inline-block; color: #914322; background: #f6dfd1; padding: 7px 11px; font-family: var(--app-font-mono); font-weight: 700; letter-spacing: .04em; font-size: .68rem; text-transform: uppercase; }
 
 /* "Tus derechos": cada derecho con un tilde, título y explicación en letra grande. */
 .rights-section { background: #f8f6f0; }
@@ -169,6 +167,36 @@ p { max-width: 68ch; }
 .rights-reference { margin: 18px 0 0; color: #3f6864; font-family: var(--app-font-mono); font-size: .9rem; font-weight: 700; letter-spacing: .02em; }
 
 .wheelchair-section { background: #f4f0e7; }
+/* Bloques de la sección de la silla: texto corto con título, separados por un filete. */
+.wheelchair-body { display: grid; gap: 34px; min-width: 0; }
+.wheelchair-block h3 { font-size: clamp(1.35rem, 2.1vw, 1.8rem); margin: 0 0 10px; }
+.wheelchair-block p { margin: 0; font-size: 1.1rem; line-height: 1.65; }
+.wheelchair-link { margin-left: 0; }
+.wheelchair-block .wheelchair-note { margin-top: 14px; color: #47595c; }
+/* Tabla de tipos de silla: si no entra en pantallas muy chicas, se desplaza de costado sin romper la página. */
+.chair-table-wrap { overflow-x: auto; border: 1px solid #d2d1c7; background: #fffdf8; }
+.chair-table { width: 100%; border-collapse: collapse; }
+.chair-table th, .chair-table td { text-align: left; vertical-align: top; padding: 14px 16px; border-top: 1px solid #e3e0d7; font-size: 1rem; line-height: 1.5; }
+.chair-table thead th { border-top: 0; background: #28393e; color: #f4f1e9; font-family: var(--app-font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+.chair-table tbody th { font-weight: 700; }
+/* Ficha "Datos de mi silla": campos grandes, con el texto de ayuda debajo de cada etiqueta. */
+.chair-form-card h3 { font-size: clamp(1.35rem, 2.1vw, 1.8rem); margin: 0 0 10px; }
+.chair-form-lead { margin: 0 0 8px; font-size: 1.05rem; line-height: 1.6; }
+.chair-privacy { margin: 0 0 22px; color: #3f6864; font-weight: 700; }
+.chair-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+.chair-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.chair-field:has(textarea) { grid-column: 1 / -1; }
+.chair-field label { font-weight: 700; font-size: 1rem; }
+.chair-hint { color: #647076; font-size: .9rem; }
+.chair-field input, .chair-field select, .chair-field textarea { width: 100%; min-height: 48px; padding: 10px 12px; border: 1.5px solid #8a8f88; border-radius: 3px; background: #fffdf8; color: #1f2b2f; font: inherit; font-size: 1.05rem; }
+.chair-field textarea { resize: vertical; }
+/* Fuentes al pie de una sección: letra chica pero legible. */
+.section-sources { border-top: 1px solid #cbc8bd; padding-top: 20px; }
+.section-sources h3 { font-family: var(--app-font-mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 10px; }
+.section-sources ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.section-sources li { font-size: .95rem; line-height: 1.6; overflow-wrap: anywhere; }
+.section-sources a { display: inline-flex; gap: 6px; align-items: center; color: #88502f; font-weight: 700; text-underline-offset: 4px; }
+.section-sources a svg { width: 14px; height: 14px; }
 
 /* "Antes de viajar": casillas grandes y fáciles de tocar, alineadas con el texto. */
 .checklist-section { background: #f4f0e7; }
@@ -316,6 +344,8 @@ p { max-width: 68ch; }
   .hero-link { width: 100%; justify-content: space-between; }
   .notice { padding: 18px; gap: 11px; }
   .print-button { width: 100%; }
+  .chair-form { grid-template-columns: 1fr; }
+  .chair-table th, .chair-table td { padding: 12px; font-size: .95rem; }
   /* En celulares chicos los botones Sí/No ocupan todo el ancho, más fáciles de tocar. */
   .quiz-answers .quiz-button, .quiz-button.primary { flex: 1 1 100%; width: 100%; }
   .quiz-codes li { grid-template-columns: 1fr; gap: 6px; }
@@ -329,32 +359,62 @@ p { max-width: 68ch; }
 }
 
 /* Impresión del checklist (botón "Imprimir checklist"). Solo se aplica cuando el botón
-   agrega la clase .print-checklist: con Ctrl + P se imprime la página completa como siempre.
+   agrega data-print="checklist" a la página: con Ctrl + P se imprime la página completa como siempre.
    Versión limpia: solo el checklist, en blanco y negro, letra grande (mínimo 12pt) y sin menú. */
 @media print {
   @page { margin: 1.5cm; }
-  html.print-checklist .skip-link,
-  html.print-checklist .site-header,
-  html.print-checklist .site-footer,
-  html.print-checklist main > section:not(#antes-de-viajar),
-  html.print-checklist #antes-de-viajar .section-index,
-  html.print-checklist .checklist-link,
-  html.print-checklist .checklist-note,
-  html.print-checklist .print-button { display: none !important; }
-  html.print-checklist * { color: #000 !important; background: #fff !important; box-shadow: none !important; }
-  html.print-checklist #antes-de-viajar { padding: 0; border: 0; }
-  html.print-checklist #antes-de-viajar .container { width: 100%; }
-  html.print-checklist #antes-de-viajar .section-grid { display: block; }
-  html.print-checklist #antes-de-viajar .section-head { margin-bottom: 16pt; }
-  html.print-checklist .section-title { font-size: 24pt; margin: 0 0 8pt; }
-  html.print-checklist .section-lead { font-size: 13pt; }
-  html.print-checklist .checklist-card { border: 0; padding: 0; }
-  html.print-checklist .checklist-card::before { display: none; }
-  html.print-checklist .checklist-item { padding: 10pt 0; border-top: 1px solid #000; break-inside: avoid; }
-  html.print-checklist .checklist-item:first-child { border-top: 0; }
-  html.print-checklist .checklist-label { font-size: 14pt; gap: 10pt; }
+  html[data-print='checklist'] .skip-link,
+  html[data-print='checklist'] .site-header,
+  html[data-print='checklist'] .site-footer,
+  html[data-print='checklist'] main > section:not(#antes-de-viajar),
+  html[data-print='checklist'] #antes-de-viajar .section-index,
+  html[data-print='checklist'] .checklist-link,
+  html[data-print='checklist'] .checklist-note,
+  html[data-print='checklist'] .print-button { display: none !important; }
+  html[data-print='checklist'] * { color: #000 !important; background: #fff !important; box-shadow: none !important; }
+  html[data-print='checklist'] #antes-de-viajar { padding: 0; border: 0; }
+  html[data-print='checklist'] #antes-de-viajar .container { width: 100%; }
+  html[data-print='checklist'] #antes-de-viajar .section-grid { display: block; }
+  html[data-print='checklist'] #antes-de-viajar .section-head { margin-bottom: 16pt; }
+  html[data-print='checklist'] .section-title { font-size: 24pt; margin: 0 0 8pt; }
+  html[data-print='checklist'] .section-lead { font-size: 13pt; }
+  html[data-print='checklist'] .checklist-card { border: 0; padding: 0; }
+  html[data-print='checklist'] .checklist-card::before { display: none; }
+  html[data-print='checklist'] .checklist-item { padding: 10pt 0; border-top: 1px solid #000; break-inside: avoid; }
+  html[data-print='checklist'] .checklist-item:first-child { border-top: 0; }
+  html[data-print='checklist'] .checklist-label { font-size: 14pt; gap: 10pt; }
   /* Casilla dibujada como un cuadrado vacío para marcar con lapicera; si ya estaba tildada, se imprime con una cruz. */
-  html.print-checklist .checklist-label input { appearance: none; width: 16pt; height: 16pt; margin-top: 2pt; border: 1.5pt solid #000; border-radius: 0; display: grid; place-content: center; }
-  html.print-checklist .checklist-label input:checked::after { content: '✕'; font-size: 12pt; line-height: 1; }
-  html.print-checklist .checklist-reference { margin-left: 26pt; font-size: 12pt; }
+  html[data-print='checklist'] .checklist-label input { appearance: none; width: 16pt; height: 16pt; margin-top: 2pt; border: 1.5pt solid #000; border-radius: 0; display: grid; place-content: center; }
+  html[data-print='checklist'] .checklist-label input:checked::after { content: '✕'; font-size: 12pt; line-height: 1; }
+  html[data-print='checklist'] .checklist-reference { margin-left: 26pt; font-size: 12pt; }
+}
+
+/* Impresión de la ficha "Datos de mi silla" (botón "Imprimir ficha"): mismo mecanismo que el
+   checklist. Solo la ficha, en blanco y negro, letra grande (mínimo 12pt) y sin menú. */
+@media print {
+  html[data-print='ficha-silla'] .skip-link,
+  html[data-print='ficha-silla'] .site-header,
+  html[data-print='ficha-silla'] .site-footer,
+  html[data-print='ficha-silla'] main > section:not(#silla),
+  html[data-print='ficha-silla'] #silla .section-head,
+  html[data-print='ficha-silla'] .wheelchair-body > :not(.chair-form-card),
+  html[data-print='ficha-silla'] .chair-form-lead,
+  html[data-print='ficha-silla'] .chair-privacy,
+  html[data-print='ficha-silla'] .chair-hint,
+  html[data-print='ficha-silla'] .print-button { display: none !important; }
+  html[data-print='ficha-silla'] * { color: #000 !important; background: #fff !important; box-shadow: none !important; }
+  html[data-print='ficha-silla'] #silla { padding: 0; border: 0; }
+  html[data-print='ficha-silla'] #silla .container { width: 100%; }
+  html[data-print='ficha-silla'] #silla .section-grid { display: block; }
+  html[data-print='ficha-silla'] .chair-form-card { border: 0; padding: 0; }
+  html[data-print='ficha-silla'] .chair-form-card::before { display: none; }
+  html[data-print='ficha-silla'] .chair-form-card h3 { font-size: 22pt; margin-bottom: 16pt; }
+  html[data-print='ficha-silla'] .chair-form { display: block; }
+  html[data-print='ficha-silla'] .chair-field { margin-bottom: 14pt; break-inside: avoid; }
+  html[data-print='ficha-silla'] .chair-field label { font-size: 12pt; }
+  /* Cada campo se imprime como un renglón para escribir: sin recuadro ni flecha de la lista. */
+  html[data-print='ficha-silla'] .chair-field input,
+  html[data-print='ficha-silla'] .chair-field select,
+  html[data-print='ficha-silla'] .chair-field textarea { appearance: none; border: 0; border-bottom: 1pt solid #000; border-radius: 0; padding: 2pt 0; min-height: 22pt; font-size: 14pt; }
+  html[data-print='ficha-silla'] .chair-field textarea { min-height: 60pt; resize: none; }
 }

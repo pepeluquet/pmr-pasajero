@@ -3,7 +3,7 @@ import { CopyButton } from '@/components/ui/copy-button';
 import { TextAnimate } from '@/components/ui/text-animate';
 import { TextureOverlay } from '@/components/ui/texture-overlay';
 import { AssistanceQuiz } from './AssistanceQuiz';
-import { guide } from '../content/guide';
+import { guide, type FormField, type Source, type WheelchairTip } from '../content/guide';
 
 // Cada bloque de contenido tiene su propio componente y su propio ancla (el id),
 // que es el que usa el menú para saltar a esa sección.
@@ -101,14 +101,17 @@ export function RightsSection() {
   );
 }
 
-// Imprime solo el checklist. La clase "print-checklist" activa los estilos de
-// impresión que ocultan el resto de la página (ver @media print en index.css);
-// así Ctrl + P desde el navegador sigue imprimiendo la página completa.
-function printChecklist() {
+// Qué parte de la página se imprime con cada botón.
+type PrintMode = 'checklist' | 'ficha-silla';
+
+// Imprime solo una parte de la página. El atributo data-print activa los estilos de
+// impresión que ocultan el resto (ver @media print en index.css); sin ese atributo,
+// Ctrl + P desde el navegador sigue imprimiendo la página completa.
+function printOnly(mode: PrintMode) {
   const page = document.documentElement;
-  page.classList.add('print-checklist');
+  page.dataset.print = mode;
   // "afterprint" se dispara al cerrar el diálogo de impresión, se haya impreso o no.
-  window.addEventListener('afterprint', () => page.classList.remove('print-checklist'), { once: true });
+  window.addEventListener('afterprint', () => { delete page.dataset.print; }, { once: true });
   window.print();
 }
 
@@ -138,7 +141,7 @@ export function ChecklistSection() {
             </li>)}
           </ul>
           <p className="checklist-note">{c.note}</p>
-          <button type="button" className="print-button" onClick={printChecklist} data-testid="button-print-checklist">
+          <button type="button" className="print-button" onClick={() => printOnly('checklist')} data-testid="button-print-checklist">
             <Printer aria-hidden="true" />{c.print}
           </button>
         </div>
@@ -166,7 +169,89 @@ export function JourneySection() {
   );
 }
 
-// "Si viajás con tu silla": por ahora solo avisa que el contenido está en preparación.
+// Bloque corto de la sección de la silla: título, texto y, si tiene, un link a otra sección.
+function WheelchairTipBlock({ tip }: { tip: WheelchairTip }) {
+  return (
+    <div className="wheelchair-block" data-testid={`wheelchair-${tip.id}`}>
+      <h3>{tip.title}</h3>
+      <p>{tip.body}</p>
+      {tip.link && <a className="checklist-link wheelchair-link" href={`#${tip.link.target}`}>{tip.link.label}<ArrowDownRight aria-hidden="true"/></a>}
+    </div>
+  );
+}
+
+// Tabla de tipos de silla. El envoltorio permite desplazarla de costado si no entra en pantallas muy chicas.
+function WheelchairTypesTable() {
+  const c = guide.wheelchair.types;
+  return (
+    <div className="wheelchair-block">
+      <h3 id="wheelchair-types-title">{c.title}</h3>
+      <div className="chair-table-wrap">
+        <table className="chair-table" aria-labelledby="wheelchair-types-title">
+          <thead><tr><th scope="col">{c.columnType}</th><th scope="col">{c.columnCode}</th><th scope="col">{c.columnInfo}</th></tr></thead>
+          <tbody>{c.rows.map(row => <tr key={row.code} data-testid={`row-chair-${row.code}`}>
+            <th scope="row">{row.type}</th><td><span className="table-code">{row.code}</span></td><td>{row.info}</td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <p className="wheelchair-note">{c.note}</p>
+    </div>
+  );
+}
+
+// Un campo de la ficha. Cada campo tiene su <label> unido por id, para que el lector de pantalla
+// diga qué va en cada uno; la ayuda (hint) se asocia con aria-describedby.
+function FormFieldInput({ field }: { field: FormField }) {
+  const inputId = `silla-${field.id}`;
+  const hintId = field.hint ? `${inputId}-ayuda` : undefined;
+  return (
+    <div className="chair-field">
+      <label htmlFor={inputId}>{field.label}</label>
+      {field.hint && <span className="chair-hint" id={hintId}>{field.hint}</span>}
+      {field.kind === 'textarea' && <textarea id={inputId} rows={3} aria-describedby={hintId} />}
+      {field.kind === 'text' && <input id={inputId} type="text" aria-describedby={hintId} />}
+      {field.kind === 'select' && <select id={inputId} defaultValue="" aria-describedby={hintId}>
+        {/* Opción vacía: si no se elige nada, en la impresión el campo sale en blanco. */}
+        <option value="" />
+        {field.options?.map(option => <option key={option} value={option}>{option}</option>)}
+      </select>}
+    </div>
+  );
+}
+
+// Ficha "Datos de mi silla": campos sin estado de React; lo escrito queda solo en la pantalla.
+// Es un <form> para agrupar los campos, pero no se envía: onSubmit lo frena por si alguien aprieta Enter.
+function WheelchairForm() {
+  const c = guide.wheelchair.form;
+  return (
+    <div className="info-card chair-form-card">
+      <h3 id="chair-form-title">{c.title}</h3>
+      <p className="chair-form-lead">{c.lead}</p>
+      <p className="chair-privacy">{c.privacy}</p>
+      <form className="chair-form" aria-labelledby="chair-form-title" onSubmit={event => event.preventDefault()}>
+        {c.fields.map(field => <FormFieldInput field={field} key={field.id} />)}
+      </form>
+      <button type="button" className="print-button" onClick={() => printOnly('ficha-silla')} data-testid="button-print-chair-form">
+        <Printer aria-hidden="true" />{c.print}
+      </button>
+    </div>
+  );
+}
+
+// Fuentes al pie de una sección, con link a cada documento.
+function SectionSources({ title, items }: { title: string; items: readonly Source[] }) {
+  return (
+    <div className="section-sources">
+      <h3>{title}</h3>
+      <ul>{items.map(source => <li key={source.citation}>
+        {source.citation}{' '}
+        {source.url && <a href={source.url} target="_blank" rel="noopener noreferrer" aria-label={`${guide.sources.open}: ${source.citation} (se abre en una pestaña nueva)`}>{guide.sources.open}<ArrowUpRight aria-hidden="true"/></a>}
+      </li>)}</ul>
+    </div>
+  );
+}
+
+// "Si viajás con tu silla": consejos, tabla de tipos, ficha imprimible y fuentes.
 export function WheelchairSection() {
   const c = guide.wheelchair;
   return (
@@ -175,11 +260,14 @@ export function WheelchairSection() {
         <div className="section-head">
           <span className="section-index">{c.index}</span>
           <h2 className="section-title" id="wheelchair-title">{c.title}</h2>
+          <p className="section-lead">{c.lead}</p>
         </div>
-        <div className="info-card">
-          <TextureOverlay texture="paperGrain" opacity={0.55} />
-          <span className="status-tag" data-testid="status-wheelchair">{c.status}</span>
-          <p className="info-card-text">{c.text}</p>
+        <div className="wheelchair-body">
+          <WheelchairTipBlock tip={c.intro} />
+          <WheelchairTypesTable />
+          {c.tips.map(tip => <WheelchairTipBlock tip={tip} key={tip.id} />)}
+          <WheelchairForm />
+          <SectionSources title={c.sourcesTitle} items={c.sources} />
         </div>
       </div>
     </section>

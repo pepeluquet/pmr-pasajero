@@ -16,6 +16,23 @@ export type QuizTarget = QuizStepId | 'extra' | 'WCHR' | 'WCHS' | 'WCHC';
 export type QuizQuestion = { id: QuizStepId; text: string; yes: QuizTarget; no: QuizTarget };
 export type QuizExtraOption = { code: string; label: string };
 export type ComplaintStep = { title: string; body: string };
+// Bloque de texto de la sección de la silla; "link" lleva a otra sección (opcional).
+export type WheelchairTip = { id: string; title: string; body: string; link?: { label: string; target: string } };
+export type WheelchairType = { code: string; type: string; info: string };
+// Campo de la ficha imprimible: texto corto, texto largo o lista de opciones.
+export type FormField = { id: string; label: string; kind: 'text' | 'textarea' | 'select'; hint?: string; options?: readonly string[] };
+
+// Citas de IATA que se usan en dos lugares (al pie de "Si viajás con tu silla" y en "Fuentes"):
+// se definen una sola vez para que no queden dos versiones distintas de la misma cita.
+// Links verificados en las páginas oficiales de IATA (accesibilidad y guía de mercancías peligrosas para pasajeros).
+const IATA_BATTERY_GUIDE = {
+  citation: 'International Air Transport Association. (2026). Battery-powered wheelchair and mobility aid guidance document.',
+  url: 'https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/mobility-aid-guidance-document.pdf',
+} satisfies Source;
+const IATA_MOBILITY_AIDS = {
+  citation: 'International Air Transport Association. (2023). IATA guidance on the transport of mobility aids (1.ª ed.).',
+  url: 'https://www.iata.org/contentassets/7b3762815ac44a10b83ccf5560c1b308/iata-guidance-on-the-transport-of-mobility-aids-final-feb2023.pdf',
+} satisfies Source;
 
 export const guide = {
   brand: { name: 'Guía PMR', descriptor: 'TRANSPORTE AÉREO · ARGENTINA' },
@@ -139,7 +156,7 @@ export const guide = {
       },
       {
         id: 'pasajero-asistente',
-        text: 'Consultá si tenés que viajar con un pasajero asistente (una persona que te acompañe). La norma lo exige cuando la persona no puede comprender las instrucciones de seguridad, abrocharse el cinturón, colocarse la máscara de oxígeno, cubrir sus necesidades básicas o colaborar en una evacuación.',
+        text: 'Consultá si tenés que viajar con un pasajero asistente (una persona que te acompañe). La norma lo exige cuando la persona no puede comprender las instrucciones de seguridad, abrocharse el cinturón, colocarse la máscara de oxígeno, cubrir sus necesidades básicas o colaborar en una evacuación. El pasajero asistente tiene que tener su propio pasaje.',
         reference: '(Decreto 809/2024, art. 31)',
       },
       {
@@ -182,12 +199,68 @@ export const guide = {
       { number: '05', title: 'Llegada', detail: 'El orden para bajar depende de cada aerolínea y de la seguridad. Podés bajar por la manga, en ambulift (un vehículo con elevador) o en una silla especial de pasillo. El personal del aeropuerto te recibe y te acompaña hasta el equipaje o la salida.' },
     ] satisfies JourneyStage[],
   },
-  // "Si viajás con tu silla": sección todavía sin contenido, se completa cuando tengamos fuentes verificadas.
+  // "Si viajás con tu silla". Regla: no poner límites de capacidad ni instrucciones técnicas
+  // de baterías; eso lo define cada aerolínea según la normativa vigente.
   wheelchair: {
     index: '05 / TU SILLA',
     title: 'Si viajás con tu silla',
-    status: 'En preparación',
-    text: 'Esta sección va a explicar qué datos de tu silla de ruedas y de su batería conviene tener a mano antes de viajar.',
+    lead: 'Lo que conviene saber y preparar si viajás con tu propia silla de ruedas.',
+    intro: {
+      id: 'avisar',
+      title: 'Avisá con tiempo',
+      body: 'Cuando reservás, contale a la aerolínea que viajás con tu propia silla y de qué tipo es. Así pueden planificar cómo trasladarla.',
+    } satisfies WheelchairTip,
+    types: {
+      title: 'Tipos de silla y batería',
+      columnType: 'Tipo de silla',
+      columnCode: 'Código para la aerolínea',
+      columnInfo: 'Qué tenés que informar',
+      // Los códigos son los de IATA para cada tipo de silla (los mismos de la guía académica).
+      rows: [
+        { code: 'WCMP', type: 'Manual', info: 'Que es manual, cuánto pesa, cuánto mide y si se pliega.' },
+        { code: 'WCBD', type: 'Eléctrica con batería seca, de gel o no derramable', info: 'Que es eléctrica y qué tipo de batería tiene.' },
+        { code: 'WCBW', type: 'Eléctrica con batería húmeda (derramable)', info: 'Que es eléctrica y qué tipo de batería tiene.' },
+        { code: 'WCLB', type: 'Eléctrica con batería de litio', info: 'Que es eléctrica y qué tipo de batería tiene.' },
+      ] satisfies WheelchairType[],
+      note: 'Las sillas eléctricas pueden necesitar una preparación especial de la batería por razones de seguridad. Esa preparación depende del tipo de batería y de lo que indique la aerolínea: consultalo antes de viajar.',
+    },
+    tips: [
+      {
+        id: 'datos',
+        title: 'Tené a mano los datos de tu silla',
+        body: 'Tipo de silla, peso, medidas, si se pliega, y el tipo de batería y cómo se desconecta o se retira (lo dice el manual del fabricante). Si no sabés qué batería tiene, el check-in puede demorarse.',
+      },
+      {
+        id: 'devolucion',
+        title: 'Preguntá dónde te la devuelven',
+        body: 'Algunas aerolíneas te la entregan en la puerta del avión y otras en otro sector del aeropuerto. Confirmalo antes de viajar.',
+      },
+      {
+        id: 'danos',
+        title: 'Si llega dañada o demora',
+        body: 'Avisá en el aeropuerto antes de irte y seguí los pasos de la sección "Si algo salió mal".',
+        link: { label: 'Ver cómo reclamar', target: 'reclamos' },
+      },
+    ] satisfies WheelchairTip[],
+    // Ficha imprimible: los datos quedan solo en la pantalla, no se guardan ni se envían.
+    form: {
+      title: 'Ficha "Datos de mi silla"',
+      lead: 'Completala en pantalla e imprimila para llevarla al aeropuerto. Los campos que dejes vacíos salen en blanco, para completarlos a mano.',
+      privacy: 'Lo que escribas no se guarda ni se envía a ningún lado.',
+      print: 'Imprimir ficha',
+      fields: [
+        { id: 'nombre', label: 'Nombre y apellido', kind: 'text' },
+        { id: 'vuelo', label: 'Número de vuelo', kind: 'text' },
+        { id: 'tipo', label: 'Tipo de silla', kind: 'select', options: ['Manual', 'Eléctrica', 'No sé'] },
+        { id: 'peso', label: 'Peso', kind: 'text', hint: 'En kilos.' },
+        { id: 'medidas', label: 'Medidas', kind: 'text', hint: 'Alto, ancho y largo, en centímetros.' },
+        { id: 'pliega', label: '¿Se pliega?', kind: 'select', options: ['Sí', 'No', 'No sé'] },
+        { id: 'bateria', label: 'Tipo de batería', kind: 'select', options: ['No tiene (silla manual)', 'Seca, de gel o no derramable', 'Húmeda (derramable)', 'De litio', 'No sé'] },
+        { id: 'desconexion', label: 'Cómo se desconecta o se retira la batería', kind: 'textarea', hint: 'Según el manual del fabricante.' },
+      ] satisfies FormField[],
+    },
+    sourcesTitle: 'Fuentes de esta sección',
+    sources: [IATA_BATTERY_GUIDE, IATA_MOBILITY_AIDS] satisfies Source[],
   },
   // Sección "Si algo salió mal": pasos para reclamar, en lenguaje simple.
   complaints: {
@@ -208,7 +281,8 @@ export const guide = {
     tipLabel: 'Consejo',
     tip: 'Guardá el número de reclamo y toda la documentación del viaje.',
   },
-  // Solo las normas que se citan en esta página (y el documento de IATA del que salen los códigos del cuestionario).
+  // Todas las fuentes que se citan en esta página: normas argentinas y documentos de IATA
+  // (códigos del cuestionario y guías sobre sillas de ruedas).
   sources: {
     index: '07 / FUENTES',
     title: 'Fuentes',
@@ -236,6 +310,9 @@ export const guide = {
         citation: 'International Air Transport Association. (s. f.). Best practices on the application of SSR codes and assistance service.',
         url: 'https://www.iata.org/contentassets/7b3762815ac44a10b83ccf5560c1b308/best-practices-on-the-application-of-ssr-codes-and-assistance-service.pdf',
       },
+      // APA 7: con el mismo autor, primero la obra sin fecha y después por año.
+      IATA_MOBILITY_AIDS,
+      IATA_BATTERY_GUIDE,
     ] satisfies Source[],
   },
   footer: {

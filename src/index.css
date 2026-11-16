@@ -87,225 +87,267 @@
   --font-sans: var(--app-font-sans);
 }
 
+
+/* ==========================================================================
+   Paleta de la página: TODOS los colores salen de estas variables.
+   Para cambiar un color, se cambia acá y se actualiza en todo el sitio.
+   Reglas de uso (accesibilidad):
+   - Sobre el amarillo, el texto va siempre en --color-texto (nunca blanco).
+   - Sobre el azul oscuro, el texto va en blanco (--color-fondo).
+   - El amarillo NUNCA se usa como color de texto sobre fondo blanco:
+     su contraste es 2,01:1 y no alcanza el mínimo de 4,5:1.
+   ========================================================================== */
+:root {
+  --color-primario: #0B3D6B;         /* Azul oscuro: encabezado, títulos, enlaces. */
+  --color-acento: #F2A900;           /* Amarillo señalética: botón principal, línea del encabezado, destacados. */
+  --color-texto: #1A1A1A;            /* Texto principal. */
+  --color-texto-secundario: #3D4F59; /* Textos de apoyo: bajadas, notas, ayudas. */
+  --color-gris: #546670;             /* Bordes de campos y botones, y detalles. */
+  --color-fondo: #FFFFFF;            /* Fondo general y texto sobre azul. */
+  --color-fondo-suave: #F7FBFD;      /* Secciones alternadas y recuadros. */
+  /* Línea divisoria fina entre ítems de una lista. No es un color nuevo: es el gris mezclado
+     con blanco. Solo para separadores decorativos, que no necesitan contraste. */
+  --color-linea: color-mix(in srgb, var(--color-gris) 35%, var(--color-fondo));
+}
+
 /* Base: ritmo editorial y foco siempre visible para navegación por teclado. */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 100px; }
-body { margin: 0; background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: var(--app-font-sans); font-size: 16px; line-height: 1.65; }
+body { margin: 0; background: var(--color-fondo); color: var(--color-texto); font-family: var(--app-font-sans); font-size: 16px; line-height: 1.65; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; cursor: pointer; }
 a { color: inherit; }
-:focus-visible { outline: 3px solid #b7552c; outline-offset: 4px; }
-::selection { background: #e9bba4; color: #25343a; }
-.skip-link { position: fixed; z-index: 100; top: 12px; left: 12px; padding: 12px 18px; background: #f8f5ed; color: #25343a; transform: translateY(-160%); }
+/* Foco del teclado: contorno amarillo de 3px con un anillo azul por fuera.
+   El amarillo se ve sobre el azul y el azul se ve sobre el blanco, así el foco
+   es claro en cualquier fondo de la página. */
+:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 0; box-shadow: 0 0 0 6px var(--color-primario); }
+::selection { background: var(--color-acento); color: var(--color-texto); }
+.skip-link { position: fixed; z-index: 100; top: 12px; left: 12px; padding: 12px 18px; background: var(--color-acento); color: var(--color-texto); font-weight: 700; transform: translateY(-160%); }
 .skip-link:focus { transform: translateY(0); }
 .container { width: min(100% - 48px, 1220px); margin-inline: auto; }
 .eyebrow, .section-index, .micro, .table-code, .stage-number { font-family: var(--app-font-mono); font-size: .69rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
-.eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #aa4c26; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--color-primario); }
 .eyebrow::before { content: ''; width: 19px; height: 2px; background: currentColor; }
 h1, h2, h3, p { margin-top: 0; }
 h1, h2, h3 { font-family: var(--app-font-serif); line-height: 1.13; letter-spacing: -.045em; }
+h2, h3 { color: var(--color-primario); }
 p { max-width: 68ch; }
 .section-title { font-size: clamp(2.1rem, 4.3vw, 4rem); font-weight: 700; margin: 16px 0 20px; }
-.section-lead { font-size: clamp(1.02rem, 1.3vw, 1.15rem); color: #536066; line-height: 1.7; margin-bottom: 0; }
+.section-lead { font-size: clamp(1.02rem, 1.3vw, 1.15rem); color: var(--color-texto-secundario); line-height: 1.7; margin-bottom: 0; }
 .section-head { margin-bottom: 44px; }
-.section-index { color: #ad512d; display: block; margin-bottom: 14px; }
-.section { padding: clamp(76px, 9vw, 132px) 0; border-top: 1px solid #ded9cc; }
+.section-index { color: var(--color-primario); display: block; margin-bottom: 14px; }
+.section { padding: clamp(76px, 9vw, 132px) 0; border-top: 1px solid var(--color-linea); }
 .section-grid { display: grid; grid-template-columns: minmax(240px, .85fr) minmax(0, 1.55fr); gap: clamp(44px, 7vw, 125px); }
 
-/* Navegación: discreta en escritorio, panel desplegable en pantallas pequeñas. */
-.site-header { position: sticky; top: 0; z-index: 50; background: rgba(247,244,236,.96); border-bottom: 1px solid #d9d5c9; backdrop-filter: blur(16px); }
+/* Botones. Principal: amarillo con texto negro en negrita (uno por sección).
+   Secundario: borde azul oscuro y fondo blanco. Al pasar el mouse se subraya el texto,
+   así el cambio no depende solo del color. */
+.button-primary { background: var(--color-acento); color: var(--color-texto); border: 2px solid var(--color-acento); font-weight: 700; }
+.button-secondary { background: var(--color-fondo); color: var(--color-primario); border: 2px solid var(--color-primario); font-weight: 700; }
+.button-primary:hover, .button-secondary:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Encabezado: fondo azul oscuro con línea amarilla de 4px abajo; texto en blanco. */
+.site-header { position: sticky; top: 0; z-index: 50; background: var(--color-primario); color: var(--color-fondo); border-bottom: 4px solid var(--color-acento); }
 .header-inner { min-height: 82px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; flex: 0 0 auto; }
-.brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid #28393e; border-radius: 50%; color: #28393e; }
+.brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--color-fondo); border-radius: 50%; color: var(--color-fondo); }
 .brand-mark svg { width: 23px; height: 23px; }
 .brand-name { font-family: var(--app-font-serif); font-size: 1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
-.brand-sub { display: block; font-family: var(--app-font-mono); font-size: .56rem; letter-spacing: .075em; text-transform: uppercase; color: #677177; margin-top: 3px; }
+.brand-sub { display: block; font-family: var(--app-font-mono); font-size: .56rem; letter-spacing: .075em; text-transform: uppercase; color: var(--color-fondo); margin-top: 3px; }
 .desktop-nav { display: flex; align-items: center; gap: clamp(11px, 1.6vw, 27px); }
-.desktop-nav a, .mobile-nav a { text-decoration: none; font-size: .79rem; font-weight: 700; transition: color .2s; }
+.desktop-nav a, .mobile-nav a { color: var(--color-fondo); text-decoration: none; font-size: .79rem; font-weight: 700; }
 .desktop-nav a { white-space: nowrap; } /* Cada link en un solo renglón. */
-.desktop-nav a:hover, .mobile-nav a:hover { color: #a64c28; }
-.desktop-nav a:last-child { border: 1px solid #c9c4b8; padding: 10px 14px; border-radius: 3px; }
-.menu-toggle { display: none; align-items: center; justify-content: center; gap: 9px; background: transparent; border: 1px solid #b8b7ad; border-radius: 3px; padding: 10px 13px; min-height: 44px; color: #28393e; font-size: .8rem; font-weight: 700; }
+/* Al pasar el mouse: subrayado amarillo (no solo cambio de color). */
+.desktop-nav a:hover, .mobile-nav a:hover { text-decoration: underline; text-decoration-color: var(--color-acento); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.desktop-nav a:last-child { border: 1px solid var(--color-fondo); padding: 10px 14px; border-radius: 3px; }
+.menu-toggle { display: none; align-items: center; justify-content: center; gap: 9px; background: transparent; border: 1px solid var(--color-fondo); border-radius: 3px; padding: 10px 13px; min-height: 44px; color: var(--color-fondo); font-size: .8rem; font-weight: 700; }
 .menu-toggle svg { width: 19px; height: 19px; }
 .mobile-nav { display: none; }
 
-/* Hero: carta de navegación con ruta punteada, dibujada enteramente en CSS/SVG. */
-.hero { position: relative; overflow: hidden; min-height: 620px; background: #27373c; color: #f4f1e9; }
-.hero::before { content: ''; pointer-events: none; position: absolute; inset: 0; background: radial-gradient(circle at 76% 47%, rgba(123,152,145,.18), transparent 35%), linear-gradient(90deg, #27373c 0%, #27373c 45%, rgba(39,55,60,.45) 100%); }
+/* Inicio: fondo azul oscuro con la ruta punteada dibujada en SVG. */
+.hero { position: relative; overflow: hidden; min-height: 620px; background: var(--color-primario); color: var(--color-fondo); }
+/* Degradé que oscurece el dibujo detrás del texto, para que el texto se lea siempre bien. */
+.hero::before { content: ''; pointer-events: none; position: absolute; inset: 0; background: linear-gradient(90deg, var(--color-primario) 0%, var(--color-primario) 45%, color-mix(in srgb, var(--color-primario) 45%, transparent) 100%); }
 .hero-inner { position: relative; min-height: 620px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: center; gap: 30px; padding-block: 82px 100px; }
 .hero-copy { position: relative; z-index: 1; }
-.hero .eyebrow { color: #e4a480; }
+.hero .eyebrow { color: var(--color-acento); }
 .hero h1 { font-size: clamp(3.25rem, 5.35vw, 6.45rem); font-weight: 700; max-width: 720px; margin: 25px 0 26px; }
-.hero h1 em { color: #dfa17e; font-style: normal; }
-.hero-intro { color: #d2d9d6; font-size: clamp(1.1rem, 1.5vw, 1.32rem); line-height: 1.7; max-width: 520px; margin-bottom: 32px; }
+.hero h1 em { color: var(--color-acento); font-style: normal; }
+.hero-intro { color: var(--color-fondo); font-size: clamp(1.1rem, 1.5vw, 1.32rem); line-height: 1.7; max-width: 520px; margin-bottom: 32px; }
 .hero-links { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.hero-link { display: inline-flex; align-items: center; gap: 12px; min-height: 50px; padding: 11px 18px; text-decoration: none; font-size: .83rem; font-weight: 700; border: 1px solid rgba(245,241,233,.35); transition: background .2s, color .2s, transform .2s; }
-.hero-link:hover { transform: translateY(-2px); background: #f3eee4; color: #27373c; }
-.hero-link.primary { border-color: #e9a782; background: #e9a782; color: #29363a; }
-.hero-link.primary:hover { background: #f6c1a1; }
+.hero-link { display: inline-flex; align-items: center; gap: 12px; min-height: 50px; padding: 11px 18px; text-decoration: none; font-size: .83rem; border-radius: 3px; transition: transform .2s; }
+.hero-link:hover { transform: translateY(-2px); }
 .hero-link svg { width: 16px; height: 16px; }
 .route-art { width: min(100%, 550px); justify-self: end; opacity: .98; }
 .route-art svg { display: block; width: 100%; height: auto; overflow: visible; }
-.hero-bottom { position: absolute; left: 0; bottom: 28px; display: flex; gap: 14px; align-items: center; color: #bbc8c4; font-family: var(--app-font-mono); font-size: .63rem; letter-spacing: .1em; text-transform: uppercase; }
-.hero-bottom::before { content: ''; height: 1px; width: 35px; background: #b9c5bf; }
+/* Colores del dibujo de la ruta (las transparencias están en el propio SVG). */
+.route-light-stroke { stroke: var(--color-fondo); }
+.route-light-fill { fill: var(--color-fondo); }
+.route-accent-stroke { stroke: var(--color-acento); }
+.route-accent-fill { fill: var(--color-acento); }
+.hero-bottom { position: absolute; left: 0; bottom: 28px; display: flex; gap: 14px; align-items: center; color: var(--color-fondo); font-family: var(--app-font-mono); font-size: .63rem; letter-spacing: .1em; text-transform: uppercase; }
+.hero-bottom::before { content: ''; height: 1px; width: 35px; background: var(--color-acento); }
 
-/* Tarjeta clara con borde de color a la izquierda: la usan "Tus derechos" y "Si viajás con tu silla". */
-.info-card { border: 1px solid #d4cec0; background: #faf8f2; padding: clamp(26px, 3.3vw, 49px); position: relative; }
-.info-card::before { content: ''; position: absolute; inset: -1px auto -1px -1px; width: 4px; background: #bd6238; }
+/* Tarjeta blanca con borde gris y una franja amarilla a la izquierda (destacado). */
+.info-card { border: 1px solid var(--color-gris); background: var(--color-fondo); padding: clamp(26px, 3.3vw, 49px); position: relative; }
+.info-card::before { content: ''; position: absolute; inset: -1px auto -1px -1px; width: 4px; background: var(--color-acento); }
 /* El contenido queda por encima de la textura decorativa (Cult UI · Texture Overlay). */
 .info-card > :not([data-slot='texture-overlay']) { position: relative; }
 
 /* "Tus derechos": cada derecho con un tilde, título y explicación en letra grande. */
-.rights-section { background: #f8f6f0; }
+.rights-section { background: var(--color-fondo); }
 .rights-list { margin: 0; padding: 0; list-style: none; }
-.rights-list li { display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #ddd6c9; }
+.rights-list li { display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid var(--color-linea); }
 .rights-list li:first-child { border-top: 0; padding-top: 0; }
-.rights-icon { width: 24px; height: 24px; flex: 0 0 auto; color: #316c69; margin-top: 4px; }
+.rights-icon { width: 24px; height: 24px; flex: 0 0 auto; color: var(--color-primario); margin-top: 4px; }
 .rights-list h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); margin: 0 0 8px; }
 .rights-list p { margin: 0; font-size: 1.1rem; line-height: 1.65; }
 /* Referencia normativa: en letra chica y tipografía mono, como las demás etiquetas. */
-.rights-reference { margin: 18px 0 0; color: #3f6864; font-family: var(--app-font-mono); font-size: .9rem; font-weight: 700; letter-spacing: .02em; }
+.rights-reference { margin: 18px 0 0; color: var(--color-texto-secundario); font-family: var(--app-font-mono); font-size: .9rem; font-weight: 700; letter-spacing: .02em; }
 
-.wheelchair-section { background: #f4f0e7; }
+.wheelchair-section { background: var(--color-fondo-suave); }
 /* Bloques de la sección de la silla: texto corto con título, separados por un filete. */
 .wheelchair-body { display: grid; gap: 34px; min-width: 0; }
 .wheelchair-block h3 { font-size: clamp(1.35rem, 2.1vw, 1.8rem); margin: 0 0 10px; }
 .wheelchair-block p { margin: 0; font-size: 1.1rem; line-height: 1.65; }
 .wheelchair-link { margin-left: 0; }
-.wheelchair-block .wheelchair-note { margin-top: 14px; color: #47595c; }
+.wheelchair-block .wheelchair-note { margin-top: 14px; color: var(--color-texto-secundario); }
 /* Tabla de tipos de silla: si no entra en pantallas muy chicas, se desplaza de costado sin romper la página. */
-.chair-table-wrap { overflow-x: auto; border: 1px solid #d2d1c7; background: #fffdf8; }
+.chair-table-wrap { overflow-x: auto; border: 1px solid var(--color-gris); background: var(--color-fondo); }
 .chair-table { width: 100%; border-collapse: collapse; }
-.chair-table th, .chair-table td { text-align: left; vertical-align: top; padding: 14px 16px; border-top: 1px solid #e3e0d7; font-size: 1rem; line-height: 1.5; }
-.chair-table thead th { border-top: 0; background: #28393e; color: #f4f1e9; font-family: var(--app-font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+.chair-table th, .chair-table td { text-align: left; vertical-align: top; padding: 14px 16px; border-top: 1px solid var(--color-linea); font-size: 1rem; line-height: 1.5; }
+.chair-table thead th { border-top: 0; background: var(--color-primario); color: var(--color-fondo); font-family: var(--app-font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
 .chair-table tbody th { font-weight: 700; }
 /* Ficha "Datos de mi silla": campos grandes, con el texto de ayuda debajo de cada etiqueta. */
 .chair-form-card h3 { font-size: clamp(1.35rem, 2.1vw, 1.8rem); margin: 0 0 10px; }
 .chair-form-lead { margin: 0 0 8px; font-size: 1.05rem; line-height: 1.6; }
-.chair-privacy { margin: 0 0 22px; color: #3f6864; font-weight: 700; }
+.chair-privacy { margin: 0 0 22px; color: var(--color-primario); font-weight: 700; }
 .chair-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
 .chair-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .chair-field:has(textarea) { grid-column: 1 / -1; }
 .chair-field label { font-weight: 700; font-size: 1rem; }
-.chair-hint { color: #647076; font-size: .9rem; }
-.chair-field input, .chair-field select, .chair-field textarea { width: 100%; min-height: 48px; padding: 10px 12px; border: 1.5px solid #8a8f88; border-radius: 3px; background: #fffdf8; color: #1f2b2f; font: inherit; font-size: 1.05rem; }
+.chair-hint { color: var(--color-texto-secundario); font-size: .9rem; }
+/* Borde gris pleno: el borde de un campo necesita contraste (mínimo 3:1) para que se vea dónde escribir. */
+.chair-field input, .chair-field select, .chair-field textarea { width: 100%; min-height: 48px; padding: 10px 12px; border: 1.5px solid var(--color-gris); border-radius: 3px; background: var(--color-fondo); color: var(--color-texto); font: inherit; font-size: 1.05rem; }
 .chair-field textarea { resize: vertical; }
 /* Fuentes al pie de una sección: letra chica pero legible. */
-.section-sources { border-top: 1px solid #cbc8bd; padding-top: 20px; }
+.section-sources { border-top: 1px solid var(--color-linea); padding-top: 20px; }
 .section-sources h3 { font-family: var(--app-font-mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 10px; }
 .section-sources ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
 .section-sources li { font-size: .95rem; line-height: 1.6; overflow-wrap: anywhere; }
-.section-sources a { display: inline-flex; gap: 6px; align-items: center; color: #88502f; font-weight: 700; text-underline-offset: 4px; }
+.section-sources a { display: inline-flex; gap: 6px; align-items: center; color: var(--color-primario); font-weight: 700; text-underline-offset: 4px; }
 .section-sources a svg { width: 14px; height: 14px; }
 
 /* "Antes de viajar": casillas grandes y fáciles de tocar, alineadas con el texto. */
-.checklist-section { background: #f4f0e7; }
+.checklist-section { background: var(--color-fondo-suave); }
 .checklist { list-style: none; margin: 0; padding: 0; }
-.checklist-item { padding: 18px 0; border-top: 1px solid #ddd6c9; }
+.checklist-item { padding: 18px 0; border-top: 1px solid var(--color-linea); }
 .checklist-item:first-child { border-top: 0; padding-top: 0; }
 .checklist-label { display: flex; align-items: flex-start; gap: 14px; font-size: 1.1rem; line-height: 1.6; cursor: pointer; }
-.checklist-label input { width: 24px; height: 24px; flex: 0 0 auto; margin: 3px 0 0; accent-color: #316c69; cursor: pointer; }
+.checklist-label input { width: 24px; height: 24px; flex: 0 0 auto; margin: 3px 0 0; accent-color: var(--color-primario); cursor: pointer; }
 /* La norma y el link se alinean con el texto, no con la casilla (24px de casilla + 14px de separación). */
-.checklist-reference { margin: 6px 0 0 38px; color: #3f6864; font-family: var(--app-font-mono); font-size: .85rem; font-weight: 700; }
-.checklist-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-left: 38px; color: #88502f; font-size: .95rem; font-weight: 700; text-underline-offset: 4px; }
-.checklist-link:hover { color: #58311e; }
+.checklist-reference { margin: 6px 0 0 38px; color: var(--color-texto-secundario); font-family: var(--app-font-mono); font-size: .85rem; font-weight: 700; }
+.checklist-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-left: 38px; color: var(--color-primario); font-size: .95rem; font-weight: 700; text-underline-offset: 4px; }
+.checklist-link:hover { text-decoration-thickness: 2px; }
 .checklist-link svg { width: 16px; height: 16px; }
-.checklist-note { color: #647076; font-size: .95rem; margin: 22px 0 0; }
-.print-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 22px; padding: 12px 26px; border: 1.5px solid #28393e; border-radius: 3px; background: #28393e; color: #f4f1e9; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background .2s; }
-.print-button:hover { background: #3a5157; }
+.checklist-note { color: var(--color-texto-secundario); font-size: .95rem; margin: 22px 0 0; }
+/* Botones de imprimir: son el botón principal de su sección (amarillo, ver .button-primary). */
+.print-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 22px; padding: 12px 26px; border-radius: 3px; font-size: 1.05rem; cursor: pointer; }
 .print-button svg { width: 18px; height: 18px; }
 
-.notice { display: flex; align-items: flex-start; gap: 18px; background: #e9eee9; border-left: 4px solid #397572; padding: 23px 26px; margin-bottom: 48px; }
-.notice-icon { width: 22px; height: 22px; flex: 0 0 auto; color: #316c69; margin-top: 2px; }
+.notice { display: flex; align-items: flex-start; gap: 18px; background: var(--color-fondo-suave); border-left: 4px solid var(--color-primario); padding: 23px 26px; margin-bottom: 48px; }
+.notice-icon { width: 22px; height: 22px; flex: 0 0 auto; color: var(--color-primario); margin-top: 2px; }
 .notice p { margin: 0; font-size: 1rem; }
 .notice strong { font-weight: 700; }
-/* Código de asistencia (WCHR, BLND…) en el resultado del cuestionario. */
-.table-code { color: #ab4c27; font-size: .82rem; }
+/* Código de asistencia (WCHR, BLND…) en el resultado del cuestionario y en la tabla de sillas. */
+.table-code { color: var(--color-primario); font-size: .82rem; }
 
 /* Cuestionario "¿Qué asistencia necesito?": tarjeta clara con botones grandes y foco bien visible. */
-.quiz-section { background: #f4f0e7; }
-.quiz-card { position: relative; border: 1px solid #d4cec0; background: #faf8f2; padding: clamp(26px, 3.3vw, 49px); }
-.quiz-card::before { content: ''; position: absolute; inset: -1px auto -1px -1px; width: 4px; background: #397572; }
-.quiz-step .micro { color: #af542f; display: block; margin-bottom: 12px; }
+.quiz-section { background: var(--color-fondo-suave); }
+.quiz-card { position: relative; border: 1px solid var(--color-gris); background: var(--color-fondo); padding: clamp(26px, 3.3vw, 49px); }
+.quiz-card::before { content: ''; position: absolute; inset: -1px auto -1px -1px; width: 4px; background: var(--color-acento); }
+.quiz-step .micro { color: var(--color-primario); display: block; margin-bottom: 12px; }
 .quiz-step h3 { font-size: clamp(1.4rem, 2.3vw, 2rem); margin: 0 0 26px; }
-.quiz-step h3:focus { outline: none; } /* El título recibe foco por código, no hace falta el recuadro. */
+/* El título recibe foco por código (para lectores de pantalla), no hace falta el recuadro. */
+.quiz-step h3:focus { outline: none; box-shadow: none; }
 .quiz-answers { display: flex; flex-wrap: wrap; gap: 12px; }
-.quiz-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; min-width: 120px; padding: 12px 26px; border: 1.5px solid #28393e; border-radius: 3px; background: transparent; color: #28393e; font-size: 1.05rem; font-weight: 700; transition: background .2s, color .2s; }
-.quiz-button:hover { background: #28393e; color: #f4f1e9; }
-.quiz-button.primary { background: #28393e; color: #f4f1e9; margin-top: 22px; }
-.quiz-button.primary:hover { background: #3a5157; }
+/* Botones del cuestionario: Sí/No y "Volver a empezar" son secundarios; "Ver resultado" es el principal. */
+.quiz-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; min-width: 120px; padding: 12px 26px; border-radius: 3px; font-size: 1.05rem; }
+.quiz-button.button-primary { margin-top: 22px; }
 .quiz-button svg { width: 18px; height: 18px; }
 .quiz-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .quiz-fieldset legend { padding: 0; }
 .quiz-fieldset legend h3 { margin-bottom: 8px; }
-.quiz-hint { color: #647076; font-size: .9rem; margin: 0 0 16px; }
+.quiz-hint { color: var(--color-texto-secundario); font-size: .9rem; margin: 0 0 16px; }
 .quiz-options { display: grid; gap: 10px; }
-.quiz-option { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 12px 16px; border: 1px solid #d4cec0; background: #fffdf8; font-size: 1rem; cursor: pointer; }
-.quiz-option:hover { border-color: #91aaa3; }
-.quiz-option:has(input:checked) { border-color: #397572; background: #e9eee9; }
-.quiz-option input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: #316c69; }
+.quiz-option { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 12px 16px; border: 1px solid var(--color-gris); background: var(--color-fondo); font-size: 1rem; cursor: pointer; }
+.quiz-option:hover { border-color: var(--color-primario); }
+/* Opción marcada: además del tilde de la casilla, borde más grueso y fondo suave. */
+.quiz-option:has(input:checked) { border: 2px solid var(--color-primario); padding: 11px 15px; background: var(--color-fondo-suave); }
+.quiz-option input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--color-primario); }
 .quiz-codes { list-style: none; margin: 0 0 26px; padding: 0; }
-.quiz-codes li { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px; padding: 15px 0; border-top: 1px solid #ddd6c9; }
+.quiz-codes li { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px; padding: 15px 0; border-top: 1px solid var(--color-linea); }
 .quiz-codes p { margin: 0; line-height: 1.55; }
-.quiz-result h4 { font-family: var(--app-font-mono); font-size: .69rem; letter-spacing: .11em; text-transform: uppercase; color: #356b69; margin: 0 0 10px; }
-.quiz-say { font-size: 1.05rem; background: #fffdf8; border: 1px dashed #c9c4b8; padding: 16px 18px; }
-.quiz-warning { display: flex; align-items: flex-start; gap: 14px; margin: 24px 0; padding: 18px 20px; background: #f8e8dc; border-left: 4px solid #b7552c; color: #5a2a15; }
-.quiz-warning svg { width: 22px; height: 22px; flex: 0 0 auto; color: #a64c28; margin-top: 2px; }
+.quiz-result h4 { font-family: var(--app-font-mono); font-size: .69rem; letter-spacing: .11em; text-transform: uppercase; color: var(--color-primario); margin: 0 0 10px; }
+.quiz-say { font-size: 1.05rem; background: var(--color-fondo-suave); border: 1px dashed var(--color-gris); padding: 16px 18px; }
+/* Aviso del resultado: franja amarilla (destacado) con texto negro; el ícono es solo decorativo. */
+.quiz-warning { display: flex; align-items: flex-start; gap: 14px; margin: 24px 0; padding: 18px 20px; background: var(--color-fondo-suave); border-left: 4px solid var(--color-acento); color: var(--color-texto); }
+.quiz-warning svg { width: 22px; height: 22px; flex: 0 0 auto; color: var(--color-primario); margin-top: 2px; }
 .quiz-warning p { margin: 0; }
 
 /* Sección "Si algo salió mal": pasos numerados con la misma línea que el resto de las tarjetas. */
-.complaints-section { background: #f8f6f0; }
-.complaint-steps { list-style: none; margin: 0 0 24px; padding: 0; border-top: 1px solid #cbc8bd; }
-.complaint-step { padding: 26px 0; border-bottom: 1px solid #cbc8bd; }
-.complaint-step .micro { color: #af542f; }
+.complaints-section { background: var(--color-fondo); }
+.complaint-steps { list-style: none; margin: 0 0 24px; padding: 0; border-top: 1px solid var(--color-linea); }
+.complaint-step { padding: 26px 0; border-bottom: 1px solid var(--color-linea); }
+.complaint-step .micro { color: var(--color-primario); }
 .complaint-step h3 { font-size: clamp(1.3rem, 2vw, 1.75rem); margin: 10px 0 12px; }
 .complaint-step p { margin: 0; line-height: 1.7; }
 .complaint-tip { margin-bottom: 0; }
 
-.journey-section { background: #e9ede9; }
-.journey-section .section-lead { color: #4e5e61; }
+.journey-section { background: var(--color-fondo); }
 .timeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding-top: 25px; }
-.stage { position: relative; border-top: 1px solid #7d9997; padding: 37px clamp(12px, 2vw, 28px) 8px 0; }
-.stage::before { content: ''; position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: #2e6968; box-shadow: 0 0 0 5px #e9ede9; }
+.stage { position: relative; border-top: 2px solid var(--color-gris); padding: 37px clamp(12px, 2vw, 28px) 8px 0; }
+/* Punto de cada etapa: el anillo blanco lo separa de la línea. */
+.stage::before { content: ''; position: absolute; top: -7px; left: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--color-primario); box-shadow: 0 0 0 5px var(--color-fondo); }
 .stage:last-child { border-top-color: transparent; }
-.stage-number { color: #356c6a; }
+.stage-number { color: var(--color-primario); }
 .stage h3 { margin: 18px 0 12px; font-size: clamp(1.1rem, 1.6vw, 1.45rem); }
-.stage p { color: #47595c; font-size: .92rem; line-height: 1.65; margin: 0; }
+.stage p { color: var(--color-texto-secundario); font-size: .92rem; line-height: 1.65; margin: 0; }
 
-.sources-section { background: #f3f0e8; }
-.sources-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid #cbc8bd; }
-.source-item { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: start; gap: 20px; padding: 23px 0; border-bottom: 1px solid #cbc8bd; }
-.source-number { font-family: var(--app-font-mono); font-size: .7rem; color: #a7512d; padding-top: 5px; }
+.sources-section { background: var(--color-fondo-suave); }
+.sources-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-linea); }
+.source-item { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: start; gap: 20px; padding: 23px 0; border-bottom: 1px solid var(--color-linea); }
+.source-number { font-family: var(--app-font-mono); font-size: .7rem; color: var(--color-primario); padding-top: 5px; }
 .source-item p { margin: 0 0 10px; line-height: 1.6; overflow-wrap: anywhere; }
-.source-item a { display: inline-flex; gap: 8px; align-items: center; text-underline-offset: 4px; color: #88502f; font-size: .84rem; font-weight: 700; overflow-wrap: anywhere; }
-.source-item a:hover { color: #58311e; }
+.source-item a { display: inline-flex; gap: 8px; align-items: center; text-underline-offset: 4px; color: var(--color-primario); font-size: .84rem; font-weight: 700; overflow-wrap: anywhere; }
+.source-item a:hover { text-decoration-thickness: 2px; }
 .source-item a svg { width: 14px; height: 14px; flex: 0 0 auto; }
-/* Botón para copiar la cita APA (Cult UI · Copy Button). */
+/* Botón para copiar la cita APA (Cult UI · Copy Button). Al copiar cambia el ícono, no solo el color. */
 .source-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.source-copy { width: 36px; height: 36px; border-radius: 3px; border: 1px solid #d1c7b6; background: transparent; color: #88502f; cursor: pointer; }
-.source-copy:hover { background: #f6dfd1; color: #58311e; }
-.source-copy:focus-visible { outline: 2px solid #397572; outline-offset: 2px; }
-.source-copy[data-copied='true'] { color: #316c69; border-color: #91aaa3; background: #e9eee9; }
-.source-pending { font-family: var(--app-font-mono); font-size: .7rem; color: #914322; background: #f6dfd1; padding: 5px 9px; }
-.source-label { font-family: var(--app-font-mono); font-size: .62rem; color: #3f6864; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; border: 1px solid #91aaa3; padding: 6px 9px; }
-.site-footer { background: #28393e; color: #f1eee6; padding: 42px 0; }
+.source-copy { width: 36px; height: 36px; border-radius: 3px; border: 1px solid var(--color-gris); background: var(--color-fondo); color: var(--color-primario); cursor: pointer; }
+.source-copy:hover { background: var(--color-fondo-suave); }
+.source-copy[data-copied='true'] { border-color: var(--color-primario); background: var(--color-fondo-suave); }
+.source-pending { font-family: var(--app-font-mono); font-size: .7rem; color: var(--color-texto); background: var(--color-fondo); border: 1px dashed var(--color-gris); padding: 5px 9px; }
+.source-label { font-family: var(--app-font-mono); font-size: .62rem; color: var(--color-primario); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; border: 1px solid var(--color-gris); padding: 6px 9px; }
+/* Pie: fondo azul oscuro con texto blanco. El aviso "Guía informativa..." queda siempre visible. */
+.site-footer { background: var(--color-primario); color: var(--color-fondo); padding: 42px 0; border-top: 4px solid var(--color-acento); }
 .footer-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
-.footer-inner p { margin: 0; font-size: .86rem; color: #cfd9d5; }
-.footer-mark { font-family: var(--app-font-serif); font-size: 2.8rem; font-weight: 800; line-height: 1; letter-spacing: -.07em; color: #e1a07c; }
+.footer-inner p { margin: 0; font-size: .86rem; color: var(--color-fondo); }
+.footer-mark { font-family: var(--app-font-serif); font-size: 2.8rem; font-weight: 800; line-height: 1; letter-spacing: -.07em; color: var(--color-acento); }
 
 @media (max-width: 1320px) {
   .desktop-nav { gap: 14px; }
   .desktop-nav a { font-size: .74rem; }
   .brand-sub { display: none; }
 }
-/* Con siete secciones el menú horizontal ya no entra en pantallas medianas:
-   por debajo de 1180px se usa el menú desplegable. */
+/* Con ocho secciones el menú horizontal ya no entra en pantallas medianas:
+   por debajo de 1180px se usa el menú desplegable (también en azul oscuro). */
 @media (max-width: 1180px) {
   .desktop-nav { display: none; }
   .menu-toggle { display: inline-flex; }
-  .mobile-nav { display: block; border-top: 1px solid #d9d5c9; padding: 8px 24px 19px; background: #f7f4ec; }
+  .mobile-nav { display: block; border-top: 1px solid var(--color-gris); padding: 8px 24px 19px; background: var(--color-primario); }
   .mobile-nav[hidden] { display: none; }
-  .mobile-nav a { display: block; padding: 11px max(0px, calc((100vw - 1220px) / 2)); border-bottom: 1px solid #e4dfd3; font-size: .92rem; }
+  .mobile-nav a { display: block; padding: 11px max(0px, calc((100vw - 1220px) / 2)); border-bottom: 1px solid var(--color-gris); font-size: .92rem; }
 }
 @media (max-width: 850px) {
   .hero-inner { grid-template-columns: 1fr  .7fr; }
@@ -327,8 +369,8 @@ p { max-width: 68ch; }
   .section { padding: 75px 0; }
   .section-head { margin-bottom: 31px; }
   .timeline { display: block; padding: 0 0 0 16px; }
-  .stage { padding: 0 0 28px 32px; border-top: 0; border-left: 1px solid #7d9997; }
-  .stage::before { top: 4px; left: -6px; }
+  .stage { padding: 0 0 28px 32px; border-top: 0; border-left: 2px solid var(--color-gris); }
+  .stage::before { top: 4px; left: -7px; }
   .stage:last-child { border-left-color: transparent; padding-bottom: 0; }
   .stage h3 { margin: 7px 0; font-size: 1.35rem; }
   .stage p { max-width: 52ch; }
@@ -347,7 +389,7 @@ p { max-width: 68ch; }
   .chair-form { grid-template-columns: 1fr; }
   .chair-table th, .chair-table td { padding: 12px; font-size: .95rem; }
   /* En celulares chicos los botones Sí/No ocupan todo el ancho, más fáciles de tocar. */
-  .quiz-answers .quiz-button, .quiz-button.primary { flex: 1 1 100%; width: 100%; }
+  .quiz-answers .quiz-button, .quiz-button.button-primary { flex: 1 1 100%; width: 100%; }
   .quiz-codes li { grid-template-columns: 1fr; gap: 6px; }
   .table-code { font-size: .74rem; letter-spacing: 0; }
   .footer-inner { align-items: start; }

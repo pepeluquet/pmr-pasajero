@@ -83,8 +83,8 @@ export function AssistanceQuiz() {
           <span className="micro">{c.questionLabel} {answered + 1}</span>
           <h3 ref={headingRef} tabIndex={-1} id="quiz-question">{question.text}</h3>
           <div className="quiz-answers" role="group" aria-labelledby="quiz-question">
-            <button type="button" className="quiz-button" onClick={() => answer(question.yes)} data-testid="button-quiz-yes">{c.yes}</button>
-            <button type="button" className="quiz-button" onClick={() => answer(question.no)} data-testid="button-quiz-no">{c.no}</button>
+            <button type="button" className="quiz-button button-secondary" onClick={() => answer(question.yes)} data-testid="button-quiz-yes">{c.yes}</button>
+            <button type="button" className="quiz-button button-secondary" onClick={() => answer(question.no)} data-testid="button-quiz-no">{c.no}</button>
           </div>
         </div>
       )}
@@ -105,7 +105,7 @@ export function AssistanceQuiz() {
               ))}
             </div>
           </fieldset>
-          <button type="button" className="quiz-button primary" onClick={() => { hasInteracted.current = true; setStep('result'); }} data-testid="button-quiz-result">{c.showResult}</button>
+          <button type="button" className="quiz-button button-primary" onClick={() => { hasInteracted.current = true; setStep('result'); }} data-testid="button-quiz-result">{c.showResult}</button>
         </div>
       )}
 
@@ -134,7 +134,7 @@ export function AssistanceQuiz() {
             <TriangleAlert aria-hidden="true" />
             <p><strong>{c.warning}</strong></p>
           </div>
-          <button type="button" className="quiz-button" onClick={restart} data-testid="button-quiz-restart">
+          <button type="button" className="quiz-button button-secondary" onClick={restart} data-testid="button-quiz-restart">
             <RotateCcw aria-hidden="true" />{c.restart}
           </button>
         </div>

@@ -335,5 +335,16 @@ export function SourcesSection() {
 }
 
 export function SiteFooter() {
-  return <footer className="site-footer"><div className="container footer-inner"><p>{guide.footer.text}</p><span className="footer-mark" aria-hidden="true">PMR.</span></div></footer>;
+  const c = guide.footer;
+  return (
+    <footer className="site-footer">
+      <div className="container footer-inner">
+        <div>
+          <p>{c.text}</p>
+          <p className="footer-origin">{c.origin} <a href={c.originUrl} className="footer-link" data-testid="link-footer-origin">{c.originLinkLabel}</a></p>
+        </div>
+        <span className="footer-mark" aria-hidden="true">PMR.</span>
+      </div>
+    </footer>
+  );
 }

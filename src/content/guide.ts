@@ -317,5 +317,10 @@ export const guide = {
   },
   footer: {
     text: 'Guía informativa. Ante cualquier duda, consultá con tu aerolínea.',
+    // Enlace de vuelta a la página académica: discreto, para que el pasajero sepa de dónde
+    // sale la información sin que lo distraiga de la guía.
+    origin: 'Elaborada en el marco de un trabajo académico de la UTN.',
+    originLinkLabel: 'Ver la página del trabajo',
+    originUrl: 'https://guia-pmr.web.app',
   },
 } as const;
